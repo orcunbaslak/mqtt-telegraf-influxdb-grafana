@@ -1,0 +1,45 @@
+version: "2"
+services:
+  influxdb:
+    container_name: influxdb
+    image: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - /tig/data/influxdb:/var/lib/influxdb
+      - /tig/conf/influxdb:/etc/influxdb/
+    restart: always
+
+  telegraf:
+    container_name: telegraf
+    image: telegraf
+    network_mode: "host"
+    volumes:
+      - /tig/conf/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    user: "0"
+    ports:
+      - "3000:3000"
+    volumes:
+      - /tig/data/grafana:/var/lib/grafana
+      - /tig/log/grafana:/var/log/grafana
+    links:
+      - influxdb
+    restart: always
+
+  mqtt:
+    image: eclipse-mosquitto:latest
+    user: "0"
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - /tig/conf/mqtt/:/mosquitto/config/
+      - /tig/data/mqtt/:/mosquitto/data/
+      - /tig/log/mqtt/:/mosquitto/log/
+    restart: always
