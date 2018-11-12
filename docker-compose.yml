@@ -28,6 +28,7 @@ services:
     volumes:
       - /tig/data/grafana:/var/lib/grafana
       - /tig/log/grafana:/var/log/grafana
+      - /tig/conf/grafana/grafana.ini:/etc/grafana/grafana.ini
     links:
       - influxdb
     restart: always
